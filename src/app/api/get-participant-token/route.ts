@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
   const apiSecret = process.env.LIVEKIT_API_SECRET;
   const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
-  console.log('WebSocket URL:', wsUrl);
-  console.log('Api Secret', apiSecret)
+  // console.log('WebSocket URL:', wsUrl);
+  // console.log('Api Secret', apiSecret)
   
 
   if (!apiKey || !apiSecret || !wsUrl) {

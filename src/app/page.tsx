@@ -17,29 +17,44 @@ export default function Page() {
   const room = "quickstart-room";
   const name = "quickstart-user";
   const [token, setToken] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    
     (async () => {
       try {
         const resp = await fetch(
           `/api/get-participant-token?room=${room}&username=${name}`
         );
+        if (!resp.ok) {
+          throw new Error(`HTTP error! status: ${resp.status}`);
+        }
         const data = await resp.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
         setToken(data.token);
+        console.log("Received:", data.token);
       } catch (e) {
-        console.error(e);
+        console.error("Error fetching token:", e);
+        setError(e instanceof Error ? e.message : String(e));
       }
     })();
   }, []);
 
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   if (token === "") {
-    return <div>Getting token...</div>;
+    <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+    </div>
   }
 
   return (
     <LiveKitRoom
-      video={true}
+      // video={true}
       audio={true}
       token={token}
       serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
