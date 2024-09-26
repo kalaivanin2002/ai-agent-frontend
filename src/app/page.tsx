@@ -15,7 +15,8 @@ export default function Home() {
 
   const fetchToken = useCallback(async () => {
     try {
-      const response = await fetch('/api/token');
+      const backendUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || '';
+      const response = await fetch(`${backendUrl}/api/get-participant-token`);
       if (!response.ok) {
         throw new Error('Failed to fetch token');
       }
