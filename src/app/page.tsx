@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 
 
-export default () => {
+const HomePage = () => {
   const [token, setToken] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
 
@@ -44,3 +44,5 @@ const ActiveRoom = () => {
     </>
   );
 };
+
+export default HomePage;
