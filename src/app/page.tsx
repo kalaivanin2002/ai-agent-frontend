@@ -42,7 +42,7 @@ const HomePage = () => {
         ) : (
           <LiveKitRoom
             token={token}
-            serverUrl={url ?? undefined}
+            serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
             connectOptions={{ autoSubscribe: true }}
           >
             <ActiveRoom />
