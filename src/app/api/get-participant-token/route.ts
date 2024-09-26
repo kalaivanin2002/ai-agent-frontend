@@ -1,6 +1,6 @@
 import { AccessToken } from 'livekit-server-sdk';
 
-export async function GET() {
+export async function GET(request: Request) {
   const roomName = Math.random().toString(36).substring(7);
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
