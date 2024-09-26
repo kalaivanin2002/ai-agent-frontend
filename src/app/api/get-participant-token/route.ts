@@ -1,40 +1,16 @@
-import { AccessToken } from "livekit-server-sdk";
-import { NextRequest, NextResponse } from "next/server";
+import { AccessToken } from 'livekit-server-sdk';
 
-export async function GET(req: NextRequest) {
-
-  const room = req.nextUrl.searchParams.get("room");
-  const username = req.nextUrl.searchParams.get("username");
-  if (!room) {
-    return NextResponse.json(
-      { error: 'Missing "room" query parameter' },
-      { status: 400 }
-    );
-  } else if (!username) {
-    return NextResponse.json(
-      { error: 'Missing "username" query parameter' },
-      { status: 400 }
-    );
-  }
-
+export async function GET(request: Request) {
+  const roomName = Math.random().toString(36).substring(7);
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
-  const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
-
-  // console.log('WebSocket URL:', wsUrl);
-  // console.log('Api Secret', apiSecret)
-  
-
-  if (!apiKey || !apiSecret || !wsUrl) {
-    return NextResponse.json(
-      { error: "Server misconfigured" },
-      { status: 500 }
-    );
-  }
-
-  const at = new AccessToken(apiKey, apiSecret, { identity: username });
-
-  at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
-
-  return NextResponse.json({ token: await at.toJwt() });
+  const at = new AccessToken(apiKey, apiSecret, {identity: "human_user"});
+  at.addGrant({
+    room: roomName,
+    roomJoin: true,
+    canPublish: true,
+    canPublishData: true,
+    canSubscribe: true,
+  });
+  return Response.json({ accessToken: await at.toJwt(), url: process.env.LIVEKIT_URL });
 }
