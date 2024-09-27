@@ -1,81 +1,53 @@
 'use client';
 import {
+  BarVisualizer,
   LiveKitRoom,
   RoomAudioRenderer,
-  useLocalParticipant,
-  useConnectionState,
+  useVoiceAssistant,
+  VoiceAssistantControlBar,
 } from '@livekit/components-react';
-import { useState, useCallback, useEffect } from "react";
-import { ConnectionState } from 'livekit-client';
+import "@livekit/components-styles";
+import { useState } from "react";
 
-export default function Home() {
+export default () => {
   const [token, setToken] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-
-  const fetchToken = useCallback(async () => {
-    try {
-      const response = await fetch('/api/token');
-      if (!response.ok) {
-        throw new Error('Failed to fetch token');
-      }
-      const { accessToken, url } = await response.json();
-      setToken(accessToken);
-      setUrl(url);
-    } catch (err) {
-      setError((err as Error).message);
-    }
-  }, []);
 
   return (
-    <main>
-      {error && <div>Error: {error}</div>}
-      {!token && <button onClick={fetchToken}>Connect</button>}
-      {token && url && (
-        <LiveKitRoom
-          token={token}
-          serverUrl={url}
-          connectOptions={{ autoSubscribe: true }}
-          onDisconnected={() => setToken(null)}
-        >
-          <RoomController />
-          <ActiveRoom />
-        </LiveKitRoom>
-      )}
-    </main>
-  );
-}
-
-const RoomController = () => {
-  const connectionState = useConnectionState();
-
-  useEffect(() => {
-    if (connectionState === ConnectionState.Disconnected) {
-      console.log('Disconnected from room');
-      // Implement reconnection logic here if needed
-    } else if (connectionState === ConnectionState.Connected) {
-      console.log('Connected to room');
-    }
-  }, [connectionState]);
-
-  return null;
+    <>  
+      <main data-lk-theme="default">
+        {token === null ? (<div className="lk-focus-layout"><button className="lk-button" onClick={async () => {
+          const {accessToken, url} = await fetch('/api/token').then(res => res.json());
+          setToken(accessToken);
+          setUrl(url);
+        }}>Connect</button></div>) : ( 
+          <LiveKitRoom
+            token={token}
+            serverUrl={url ?? undefined}
+            connectOptions={{autoSubscribe: true}}
+            data-lk-theme="default"
+            style={{ height: '100dvh' }}
+          >   
+            <SimpleVoiceAssistant />
+            <VoiceAssistantControlBar />
+            <RoomAudioRenderer />
+          </LiveKitRoom>
+        )}  
+      </main>
+    </> 
+  );  
 };
 
-const ActiveRoom = () => {
-  const { localParticipant, isMicrophoneEnabled } = useLocalParticipant();
-
-  const toggleMicrophone = useCallback(() => {
-    if (localParticipant) {
-      localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled);
-    }
-  }, [localParticipant, isMicrophoneEnabled]);
-
+const SimpleVoiceAssistant= () => {
+  const { state, audioTrack } = useVoiceAssistant();
   return (
     <>
-      <RoomAudioRenderer />
-      <button onClick={toggleMicrophone}>Toggle Microphone</button>
-      <div>Audio Enabled: {isMicrophoneEnabled ? 'Unmuted' : 'Muted'}</div>
+      <BarVisualizer
+        state={state}
+        barCount={7}
+        trackRef={audioTrack}
+        style={{ height: '300px' }}
+      />
     </>
   );
 };
