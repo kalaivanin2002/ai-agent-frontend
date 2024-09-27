@@ -13,10 +13,10 @@ export default function Home() {
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+
   const fetchToken = useCallback(async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '';
-      const response = await fetch(`${backendUrl}/api/token`);
+      const response = await fetch('/api/token');
       if (!response.ok) {
         throw new Error('Failed to fetch token');
       }
