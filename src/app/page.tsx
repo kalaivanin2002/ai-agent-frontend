@@ -9,7 +9,7 @@ import {
 import "@livekit/components-styles";
 import { useState } from "react";
 
-export default () => {
+const Homepage =  () => {
   const [token, setToken] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
 
@@ -51,3 +51,5 @@ const SimpleVoiceAssistant= () => {
     </>
   );
 };
+
+export default Homepage;
