@@ -2,11 +2,15 @@ import { AccessToken } from 'livekit-server-sdk';
 import crypto from 'crypto';
 
 export async function GET(request: Request) {
-  // Extract user identity from the request, or generate a random one if not provided
   const url = new URL(request.url);
-  const userIdentity = url.searchParams.get('identity') || generateRandomIdentity();
+  let userIdentity = url.searchParams.get('identity');
 
-  const roomName = generateUniqueRoomName();
+  // If userIdentity is null or an empty string, generate a new one
+  if (!userIdentity) {
+    userIdentity = generateRandomIdentity();
+  }
+
+  const roomName = url.searchParams.get('room') || generateUniqueRoomName();
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
 
