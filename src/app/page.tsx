@@ -10,7 +10,7 @@ import {
 } from '@livekit/components-react';
 import "@livekit/components-styles";
 import { useState, useEffect, useCallback } from "react";
-import { RoomEvent, Participant, Room, ConnectionState } from 'livekit-client';
+import { RoomEvent, Participant, ConnectionState } from 'livekit-client';
 
 const RoomComponent = () => {
   const [token, setToken] = useState<string | null>(null);
